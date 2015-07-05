@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>現在公開可能な情報</title><link>fatboyzz.github.io/fatboyzz_site/</link><description></description><atom:link href="fatboyzz.github.io/fatboyzz_site/feeds/fatboyzz.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 05 Jul 2015 00:00:00 +0800</lastBuildDate><item><title>寂寞的时候画美九 ...</title><link>fatboyzz.github.io/fatboyzz_site/ji-mo-de-shi-hou-hua-mei-jiu.html</link><description>&lt;p&gt;何时长出杀老师一样的手 ...&lt;/p&gt;
+&lt;p&gt;&lt;img alt="いざよいみく" src="fatboyzz.github.io/fatboyzz_site/images/miku.jpg" /&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">fatboyzz</dc:creator><pubDate>Sun, 05 Jul 2015 00:00:00 +0800</pubDate><guid>tag:,2015-07-05:fatboyzz.github.io/fatboyzz_site/ji-mo-de-shi-hou-hua-mei-jiu.html</guid><category>draw</category></item><item><title>矩阵变换那些事</title><link>fatboyzz.github.io/fatboyzz_site/ju-zhen-bian-huan-na-xie-shi.html</link><description>&lt;h3&gt;view 矩阵&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;gluLookAt&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;eyeX&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;eyeY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;eyeZ&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;centerX&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;centerY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;centerZ&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Gldouble&lt;/span&gt;    &lt;span class="n"&gt;upX&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;upY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;GLdouble&lt;/span&gt;    &lt;span class="n"&gt;upZ&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个函数可以生成 view 矩阵，作用相当于更换了基底。&lt;/p&gt;
+&lt;p&gt;opengl 默认基底 原点在视口中心，x 轴向右，y 向上，z 向屏幕外，相机处于原点，向 z 轴负半轴看去。&lt;/p&gt;
+&lt;p&gt;如果想要换一个角度看世界，就需要坐标变换。把基底变换到新的位置，让 z 轴的负半轴指向相机所看的方向。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;声明一下，矩阵以列的方式看，顶点，向量都看成列矩阵（只有一列的矩阵）。&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;坐标变换就是换基底&lt;/h3&gt;
+&lt;p&gt;基底，可以看成是矩阵的列向量。比如基底分别为 &lt;span class="math"&gt;\(vx,vy,vz\)&lt;/span&gt; 坐标为 &lt;span class="math"&gt;\(v_0(x_0,y_0,z_0)\)&lt;/span&gt; 的点可以表示为：&lt;/p&gt;
+&lt;p&gt;
+&lt;div class="math"&gt;$$\left( {\begin{array}{*{20}{c}}{{v_x}}&amp;amp;{{v_y}}&amp;amp;{{v_z}}\end{array}} \right){v_0} = {v_x}{x_0} + {v_y}{y_0} + {v_z}{z_0}$$&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;理解为 用坐标分量对基底进行线性组合。&lt;/p&gt;
+&lt;p&gt;设 &lt;span class="math"&gt;\(I\)&lt;/span&gt; 为单位矩阵 则默认基底下坐标对应的值就是 &lt;span class="math"&gt;\(Iv\)&lt;/span&gt; 。&lt;/p&gt;
+&lt;p&gt;现在如果想要换一套坐标，变成用矩阵 &lt;span class="math"&gt;\(M\)&lt;/span&gt; 的列向量作为基底，并且还要使得最终计算出的点是向量空间中的同一个点则：&lt;/p&gt;
+&lt;p&gt;
+&lt;div class="math"&gt;$$Iv = M(M^{ - 1}v)$$&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;把右边 &lt;span class="math"&gt;\({M^{ - 1}}v\)&lt;/span&gt; 看成整体，它意味着，若要换 &lt;span class="math"&gt;\(M\)&lt;/span&gt; 为基底，所有坐标都要左乘 &lt;span class="math"&gt;\({M^{-1}}\)&lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;复合换基底&lt;/h3&gt;
+&lt;p&gt;gluLookAt 对基底做了两个变换。它先旋转了基底，使其 z 负半轴指向 center - eye ，然后位移到 eye 。&lt;/p&gt;
+&lt;p&gt;这相当于新的基底为 ：&lt;/p&gt;
+&lt;p&gt;
+&lt;div class="math"&gt;$$M = TRI$$&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;理解为，将 &lt;span class="math"&gt;\(I\)&lt;/span&gt; 按列（即基底）切开，每列做了 &lt;span class="math"&gt;\(TR\)&lt;/span&gt; 变换后再合起来。&lt;/p&gt;
+&lt;p&gt;所以坐标变换需要的矩阵就是 &lt;span class="math"&gt;\((TR)^{-1}\)&lt;/span&gt; 即 &lt;span class="math"&gt;\(R^{-1}T^{-1}\)&lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;gluLookAt 的实现&lt;/h3&gt;
+&lt;p&gt;先通过规范化与叉乘，得到旋转后的基底。注意 :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="math"&gt;\(F\)&lt;/span&gt; 为相机方向即基底 z 轴负半轴方向。&lt;/li&gt;
+&lt;li&gt;&lt;span class="math"&gt;\(R\)&lt;/span&gt; 是正交矩阵 所以 &lt;span class="math"&gt;\(R^T=R^{-1}\)&lt;/span&gt; 。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以第三行添上负号。这就是 opengl 文档中的 &lt;span class="math"&gt;\(M\)&lt;/span&gt;。&lt;/p&gt;
+&lt;p&gt;而 &lt;span class="math"&gt;\(T\)&lt;/span&gt; 是位移矩阵，所以 &lt;span class="math"&gt;\(T^{-1}\)&lt;/span&gt; 就是反方向位移。&lt;/p&gt;
+&lt;p&gt;这就是 opengl 文档中的 glTranslated(-eyex, -eyey, -eyez) 。&lt;/p&gt;
+&lt;p&gt;合起来就是 &lt;span class="math"&gt;\(R^{-1}T^{-1}\)&lt;/span&gt; 。&lt;/p&gt;
+&lt;p&gt;(ps: opengl 文档  s = f x up' 缺少规范化)&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'white ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">fatboyzz</dc:creator><pubDate>Tue, 01 Apr 2014 00:00:00 +0800</pubDate><guid>tag:,2014-04-01:fatboyzz.github.io/fatboyzz_site/ju-zhen-bian-huan-na-xie-shi.html</guid><category>c++</category><category>opengl</category><category>math</category></item><item><title>进击的 c++</title><link>fatboyzz.github.io/fatboyzz_site/jin-ji-de-c.html</link><description>&lt;p&gt;这篇文章是讲 c++ 完美转发的&lt;/p&gt;
+&lt;p&gt;前提:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;c++ 的变量有值语义，所以为了避免调用大开销的复制构造函数，函数形参应该采用   const T&amp;amp; 或者 T&amp;amp;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;这里不讨论原始指针、智能指针，因为指针本身是传值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果需要在函数中修改形参的值，形参就只能用 T&amp;amp; 或者 T&amp;amp;&amp;amp;。所以 const T&amp;amp; 不在本篇文章讨论范围。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;希望能够写包装函数，为已有函数添加功能或者写高阶函数。如：std::make_shared() std::tuple() std::function() ...&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;假设下面就是一个复制开销很大的类。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Object&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;slow copy&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;        &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;fast move&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;};&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;还有对这个类进行处理的函数。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;solve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;solve rvalue&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;solve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;solve lvalue&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以及测试用的 main。（wrap 函数后面定义）&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="nt"&gt;int&lt;/span&gt; &lt;span class="nt"&gt;main&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-- lvalue --\n&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;wrap&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-- rvalue --\n&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;wrap&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-- lvalue_reference --\n&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;obj2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;wrap&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj2&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-- rvalue_reference --\n&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;wrap&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Object&lt;/span&gt;&lt;span class="p"&gt;()));&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;return&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;下面尝试给 solve(Object) 写个包装函数 wrap(Object)。&lt;/p&gt;
+&lt;p&gt;这个包装函数应该能够实现完美转发。即：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给 wrap 右值，调用右值引用版本的 solve 。&lt;/li&gt;
+&lt;li&gt;给 wrap 左值，调用左值引用版本的 solve 。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;尝试1：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;void wrap(T obj)&lt;/span&gt;
+&lt;span class="code-line"&gt;{&lt;/span&gt;
+&lt;span class="code-line"&gt;    solve(obj);&lt;/span&gt;
+&lt;span class="code-line"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;输出：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;-- lvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;slow copy&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- lvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;slow copy&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;fast move&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;形参类型&lt;/th&gt; 
+        &lt;th&gt;T in wrap&lt;/th&gt;
+        &lt;th&gt;type of obj&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(左值)&lt;/td&gt; 
+        &lt;td&gt;Object&lt;/td&gt;
+        &lt;td&gt;Object&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(右值)&lt;/td&gt;               
+        &lt;td&gt;Object&lt;/td&gt; 
+        &lt;td&gt;Object&lt;/td&gt;                      
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&lt;/td&gt;
+        &lt;td&gt;Object&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object &lt;/td&gt;
+        &lt;td&gt;Object&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+&lt;li&gt;形参为左值时，错误的调用了 Object 的复制构造。&lt;/li&gt;
+&lt;li&gt;形参为右值时，错误的重载了 solve lvalue 。
+这是因为变量 obj 在 wrap 中是个左值。对于左值实参，重载的时候选用了引用版本。&lt;/li&gt;
+&lt;li&gt;T 在规约的时候是不会把引用加入的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;尝试2：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;template &amp;lt;typename T&amp;gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;void wrap(T &amp;amp;obj)&lt;/span&gt;
+&lt;span class="code-line"&gt;{&lt;/span&gt;
+&lt;span class="code-line"&gt;    solve(obj);&lt;/span&gt;
+&lt;span class="code-line"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;编译错误，不能用右值调用 wrap 了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;尝试3：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;template &amp;lt;typename T&amp;gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;void wrap(T &amp;amp;&amp;amp;obj)&lt;/span&gt;
+&lt;span class="code-line"&gt;{&lt;/span&gt;
+&lt;span class="code-line"&gt;    solve(obj);&lt;/span&gt;
+&lt;span class="code-line"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;输出：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;-- lvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- lvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;形参类型&lt;/th&gt; 
+        &lt;th&gt;T in wrap&lt;/th&gt;
+        &lt;th&gt;type of obj&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(左值)&lt;/td&gt; 
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;     
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(右值)&lt;/td&gt;               
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt; 
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;                      
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+&lt;li&gt;用 T&amp;amp;&amp;amp; 作为形参类型时，使用了特殊的归约规则. &lt;ul&gt;
+&lt;li&gt;Object&amp;amp;&amp;amp;&amp;amp; -&amp;gt; Object&amp;amp;&lt;/li&gt;
+&lt;li&gt;Object&amp;amp;&amp;amp;&amp;amp;&amp;amp; -&amp;gt; Object&amp;amp;&amp;amp;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;形参为右值或右值引用时，错误的重载了 solve lvalue。
+这是因为 Object &amp;amp;&amp;amp; 类型的 obj 在 wrap 中是个左值。对于左值实参，重载的时候选用了引用版本。&lt;/li&gt;
+&lt;li&gt;离成功只差一步了，如果能把 Object&amp;amp;&amp;amp; 类型的 obj 转化成一个右值，同时 Object&amp;amp; 类型的 obj 还是左值，完美转发就成立了。
+而把右值引用变量的 obj 转化成一个右值可以通过类型转换的方式构造临时对象来完成。(Object&amp;amp;&amp;amp;)obj &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;尝试4：&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="nt"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;typename&lt;/span&gt; &lt;span class="nt"&gt;T&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nt"&gt;void&lt;/span&gt; &lt;span class="nt"&gt;wrap&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;T&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;obj&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;solve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;forward&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;输出：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;-- lvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve rvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- lvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve lvalue&lt;/span&gt;
+&lt;span class="code-line"&gt;-- rvalue_reference --&lt;/span&gt;
+&lt;span class="code-line"&gt;solve rvalue&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;参数类型转化的表格与尝试 3 是一样的，不再列出。&lt;/li&gt;
+&lt;li&gt;std::forward&lt;T&gt;() 正是一个可以把右值引用变量 obj 转化成一个右值，同时左值引用变量 obj 还是左值的函数。&lt;/li&gt;
+&lt;li&gt;期待已久的结果出现了。注意这里没有任何复制开销。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;std::forward&lt;T&gt;() 源码分析&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;template &amp;lt;class _Tp&amp;gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11&lt;/span&gt;
+&lt;span class="code-line"&gt;_Tp&amp;amp;&amp;amp;&lt;/span&gt;
+&lt;span class="code-line"&gt;forward(typename std::remove_reference&amp;lt;_Tp&amp;gt;::type&amp;amp; __t) _NOEXCEPT&lt;/span&gt;
+&lt;span class="code-line"&gt;{&lt;/span&gt;
+&lt;span class="code-line"&gt;    return static_cast&amp;lt;_Tp&amp;amp;&amp;amp;&amp;gt;(__t);&lt;/span&gt;
+&lt;span class="code-line"&gt;}&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;template &amp;lt;class _Tp&amp;gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11&lt;/span&gt;
+&lt;span class="code-line"&gt;_Tp&amp;amp;&amp;amp;&lt;/span&gt;
+&lt;span class="code-line"&gt;forward(typename std::remove_reference&amp;lt;_Tp&amp;gt;::type&amp;amp;&amp;amp; __t) _NOEXCEPT&lt;/span&gt;
+&lt;span class="code-line"&gt;{&lt;/span&gt;
+&lt;span class="code-line"&gt;    static_assert(!std::is_lvalue_reference&amp;lt;_Tp&amp;gt;::value,&lt;/span&gt;
+&lt;span class="code-line"&gt;        &amp;quot;Can not forward an rvalue as an lvalue.&amp;quot;);&lt;/span&gt;
+&lt;span class="code-line"&gt;    return static_cast&amp;lt;_Tp&amp;amp;&amp;amp;&amp;gt;(__t);&lt;/span&gt;
+&lt;span class="code-line"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;形参类型&lt;/th&gt; 
+        &lt;th&gt;_Tp&lt;/th&gt;
+        &lt;th&gt;type of __t&lt;/th&gt;
+        &lt;th&gt;static_cast&lt;_Tp&amp;&amp;&gt;(__t)&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(左值)&lt;/td&gt; 
+        &lt;td&gt;Object&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;(右值)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object(右值)&lt;/td&gt;               
+        &lt;td&gt;Object&lt;/td&gt; 
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;(右值)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;(左值)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&lt;/td&gt;
+        &lt;td&gt;Object&amp;&amp;(右值)&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+&lt;li&gt;完美转发中只用到了后两条&lt;/li&gt;
+&lt;li&gt;_Tp 调用时已给出，就是形参 obj 的类型。&lt;/li&gt;
+&lt;li&gt;形参类型是左值，__t 重载为 Object&amp;amp; 。形参类型为右值，__t 重载为 Object&amp;amp;&amp;amp;&lt;/li&gt;
+&lt;li&gt;static_assert 防止自作聪明的程序员写 &lt;code&gt;std::forward&amp;lt;int&amp;amp;&amp;gt;(100)&lt;/code&gt; 这是错误的写法。_Tp 必须是实参本身的类型。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;总结&lt;/h3&gt;
+&lt;p&gt;其实前面的都是废话。如果要实现完美转发，关键两点。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 T&amp;amp;&amp;amp; arg 作为形参&lt;/li&gt;
+&lt;li&gt;转发给其他函数时 std::forward&lt;T&gt;(arg)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;比如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="code-line"&gt;&lt;span class="nt"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;typename&lt;/span&gt; &lt;span class="nt"&gt;Func&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;typename&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt; &lt;span class="nt"&gt;Param&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="nt"&gt;auto&lt;/span&gt; &lt;span class="nt"&gt;apply&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;Func&lt;/span&gt; &lt;span class="nt"&gt;f&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nt"&gt;Param&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&amp;amp;...&lt;/span&gt; &lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nt"&gt;-&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="nt"&gt;decltype&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;f&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="o"&gt;...))&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;    &lt;span class="n"&gt;return&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;forward&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Param&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;
+&lt;span class="code-line"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">fatboyzz</dc:creator><pubDate>Wed, 12 Mar 2014 00:00:00 +0800</pubDate><guid>tag:,2014-03-12:fatboyzz.github.io/fatboyzz_site/jin-ji-de-c.html</guid><category>c++</category></item></channel></rss>

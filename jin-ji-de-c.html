@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>現在公開可能な情報</title>
+	<meta name="description" content="">
+	<meta name="author" content="fatboyzz">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="./theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="./theme/css/bootstrap.min.css" rel="stylesheet">
+	<link href="./theme/local.css" rel="stylesheet">
+	<link href="./theme/pygments.css" rel="stylesheet">
+
+<script type="text/javascript">
+	var disqus_identifier = "jin-ji-de-c.html";
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = 'http://fatboyzz.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+
+</head>
+<body>
+	<div class="container">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">		
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div class="navbar-brand">
+						<a href="./index.html">現在公開可能な情報</a>
+					</div>
+					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li class="active"><a href="./category/ma-nong.html">码农</a></li>
+							<li ><a href="./category/zhai.html">宅</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="./archives.html">[archives]</a></li>
+							<li><a href="./tags.html">[tags]</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+	<div class='article'>
+		<div>
+			<h2>进击的 c++</h2>
+			<p class="lead small">2014-03-12
+by <a class="url fn" href="./author/fatboyzz.html">fatboyzz </a>
+ in <a href="./category/ma-nong.html">码农</a>
+tags: <a href="./tag/c.html">c++</a> </p>
+		</div>
+		<div><p>这篇文章是讲 c++ 完美转发的</p>
+<p>前提:</p>
+<ul>
+<li>
+<p>c++ 的变量有值语义，所以为了避免调用大开销的复制构造函数，函数形参应该采用   const T&amp; 或者 T&amp;。</p>
+</li>
+<li>
+<p>这里不讨论原始指针、智能指针，因为指针本身是传值。</p>
+</li>
+<li>
+<p>如果需要在函数中修改形参的值，形参就只能用 T&amp; 或者 T&amp;&amp;。所以 const T&amp; 不在本篇文章讨论范围。</p>
+</li>
+<li>
+<p>希望能够写包装函数，为已有函数添加功能或者写高阶函数。如：std::make_shared() std::tuple() std::function() ...</p>
+</li>
+</ul>
+<p>假设下面就是一个复制开销很大的类。</p>
+<div class="highlight"><pre><span class="code-line"><span class="k">class</span> <span class="nc">Object</span> <span class="p">{</span></span>
+<span class="code-line"><span class="k">public</span><span class="o">:</span></span>
+<span class="code-line">    <span class="n">Object</span><span class="p">()</span> <span class="p">{}</span></span>
+<span class="code-line">    <span class="n">Object</span><span class="p">(</span><span class="k">const</span> <span class="n">Object</span> <span class="o">&amp;</span><span class="n">obj</span><span class="p">)</span></span>
+<span class="code-line">    <span class="p">{</span></span>
+<span class="code-line">        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;slow copy</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="p">}</span></span>
+<span class="code-line">    <span class="n">Object</span><span class="p">(</span><span class="n">Object</span> <span class="o">&amp;&amp;</span><span class="n">obj</span><span class="p">)</span></span>
+<span class="code-line">    <span class="p">{</span></span>
+<span class="code-line">        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;fast move</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="p">}</span></span>
+<span class="code-line"><span class="p">};</span></span>
+</pre></div>
+
+
+<p>还有对这个类进行处理的函数。</p>
+<div class="highlight"><pre><span class="code-line"><span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="n">Object</span> <span class="o">&amp;&amp;</span><span class="n">obj</span><span class="p">)</span></span>
+<span class="code-line"><span class="p">{</span></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;solve rvalue</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span></span>
+<span class="code-line"><span class="p">}</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="n">Object</span> <span class="o">&amp;</span><span class="n">obj</span><span class="p">)</span></span>
+<span class="code-line"><span class="p">{</span></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;solve lvalue</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span></span>
+<span class="code-line"><span class="p">}</span></span>
+</pre></div>
+
+
+<p>以及测试用的 main。（wrap 函数后面定义）</p>
+<div class="highlight"><pre><span class="code-line"><span class="nt">int</span> <span class="nt">main</span><span class="o">()</span></span>
+<span class="code-line"><span class="p">{</span></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;-- lvalue --\n&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="n">Object</span> <span class="n">obj</span><span class="p">;</span></span>
+<span class="code-line">    <span class="n">wrap</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;-- rvalue --\n&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="n">wrap</span><span class="p">(</span><span class="n">Object</span><span class="p">());</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;-- lvalue_reference --\n&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="n">Object</span> <span class="o">&amp;</span><span class="n">obj2</span> <span class="o">=</span> <span class="n">obj</span><span class="p">;</span></span>
+<span class="code-line">    <span class="n">wrap</span><span class="p">(</span><span class="n">obj2</span><span class="p">);</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;-- rvalue_reference --\n&quot;</span><span class="p">);</span></span>
+<span class="code-line">    <span class="n">wrap</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Object</span><span class="p">()));</span></span>
+<span class="code-line">    <span class="n">return</span> <span class="m">0</span><span class="p">;</span></span>
+<span class="code-line"><span class="p">}</span></span>
+</pre></div>
+
+
+<p>下面尝试给 solve(Object) 写个包装函数 wrap(Object)。</p>
+<p>这个包装函数应该能够实现完美转发。即：</p>
+<ul>
+<li>给 wrap 右值，调用右值引用版本的 solve 。</li>
+<li>给 wrap 左值，调用左值引用版本的 solve 。</li>
+</ul>
+<h3>尝试1：</h3>
+<div class="highlight"><pre><span class="code-line">void wrap(T obj)</span>
+<span class="code-line">{</span>
+<span class="code-line">    solve(obj);</span>
+<span class="code-line">}</span>
+</pre></div>
+
+
+<p>输出：</p>
+<div class="highlight"><pre><span class="code-line">-- lvalue --</span>
+<span class="code-line">slow copy</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- lvalue_reference --</span>
+<span class="code-line">slow copy</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue_reference --</span>
+<span class="code-line">fast move</span>
+<span class="code-line">solve lvalue</span>
+</pre></div>
+
+
+<table>
+    <tr>
+        <th>形参类型</th> 
+        <th>T in wrap</th>
+        <th>type of obj</th>
+    </tr>
+    <tr>
+        <td>Object(左值)</td> 
+        <td>Object</td>
+        <td>Object</td>
+    </tr>
+    <tr>
+        <td>Object(右值)</td>               
+        <td>Object</td> 
+        <td>Object</td>                      
+    </tr>
+    <tr>
+        <td>Object&</td>
+        <td>Object</td>
+        <td>Object</td>
+    </tr>
+    <tr>
+        <td>Object&&</td>
+        <td>Object </td>
+        <td>Object</td>
+    </tr>
+</table>
+
+<ul>
+<li>形参为左值时，错误的调用了 Object 的复制构造。</li>
+<li>形参为右值时，错误的重载了 solve lvalue 。
+这是因为变量 obj 在 wrap 中是个左值。对于左值实参，重载的时候选用了引用版本。</li>
+<li>T 在规约的时候是不会把引用加入的。</li>
+</ul>
+<h3>尝试2：</h3>
+<div class="highlight"><pre><span class="code-line">template &lt;typename T&gt;</span>
+<span class="code-line">void wrap(T &amp;obj)</span>
+<span class="code-line">{</span>
+<span class="code-line">    solve(obj);</span>
+<span class="code-line">}</span>
+</pre></div>
+
+
+<ul>
+<li>编译错误，不能用右值调用 wrap 了。</li>
+</ul>
+<h3>尝试3：</h3>
+<div class="highlight"><pre><span class="code-line">template &lt;typename T&gt;</span>
+<span class="code-line">void wrap(T &amp;&amp;obj)</span>
+<span class="code-line">{</span>
+<span class="code-line">    solve(obj);</span>
+<span class="code-line">}</span>
+</pre></div>
+
+
+<p>输出：</p>
+<div class="highlight"><pre><span class="code-line">-- lvalue --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- lvalue_reference --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue_reference --</span>
+<span class="code-line">solve lvalue</span>
+</pre></div>
+
+
+<table>
+    <tr>
+        <th>形参类型</th> 
+        <th>T in wrap</th>
+        <th>type of obj</th>
+    </tr>
+    <tr>
+        <td>Object(左值)</td> 
+        <td>Object&</td>
+        <td>Object&</td>     
+    </tr>
+    <tr>
+        <td>Object(右值)</td>               
+        <td>Object&&</td> 
+        <td>Object&&</td>                      
+    </tr>
+    <tr>
+        <td>Object&</td>
+        <td>Object&</td>
+        <td>Object&</td>
+    </tr>
+    <tr>
+        <td>Object&&</td>
+        <td>Object&&</td>
+        <td>Object&&</td>
+    </tr>
+</table>
+
+<ul>
+<li>用 T&amp;&amp; 作为形参类型时，使用了特殊的归约规则. <ul>
+<li>Object&amp;&amp;&amp; -&gt; Object&amp;</li>
+<li>Object&amp;&amp;&amp;&amp; -&gt; Object&amp;&amp;</li>
+</ul>
+</li>
+<li>形参为右值或右值引用时，错误的重载了 solve lvalue。
+这是因为 Object &amp;&amp; 类型的 obj 在 wrap 中是个左值。对于左值实参，重载的时候选用了引用版本。</li>
+<li>离成功只差一步了，如果能把 Object&amp;&amp; 类型的 obj 转化成一个右值，同时 Object&amp; 类型的 obj 还是左值，完美转发就成立了。
+而把右值引用变量的 obj 转化成一个右值可以通过类型转换的方式构造临时对象来完成。(Object&amp;&amp;)obj </li>
+</ul>
+<h3>尝试4：</h3>
+<div class="highlight"><pre><span class="code-line"><span class="nt">template</span> <span class="o">&lt;</span><span class="nt">typename</span> <span class="nt">T</span><span class="o">&gt;</span></span>
+<span class="code-line"><span class="nt">void</span> <span class="nt">wrap</span><span class="o">(</span><span class="nt">T</span> <span class="o">&amp;&amp;</span><span class="nt">obj</span><span class="o">)</span></span>
+<span class="code-line"><span class="p">{</span></span>
+<span class="code-line">    <span class="n">solve</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">));</span></span>
+<span class="code-line"><span class="p">}</span></span>
+</pre></div>
+
+
+<p>输出：</p>
+<div class="highlight"><pre><span class="code-line">-- lvalue --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue --</span>
+<span class="code-line">solve rvalue</span>
+<span class="code-line">-- lvalue_reference --</span>
+<span class="code-line">solve lvalue</span>
+<span class="code-line">-- rvalue_reference --</span>
+<span class="code-line">solve rvalue</span>
+</pre></div>
+
+
+<ul>
+<li>参数类型转化的表格与尝试 3 是一样的，不再列出。</li>
+<li>std::forward<T>() 正是一个可以把右值引用变量 obj 转化成一个右值，同时左值引用变量 obj 还是左值的函数。</li>
+<li>期待已久的结果出现了。注意这里没有任何复制开销。</li>
+</ul>
+<h3>std::forward<T>() 源码分析</h3>
+<div class="highlight"><pre><span class="code-line">template &lt;class _Tp&gt;</span>
+<span class="code-line">inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11</span>
+<span class="code-line">_Tp&amp;&amp;</span>
+<span class="code-line">forward(typename std::remove_reference&lt;_Tp&gt;::type&amp; __t) _NOEXCEPT</span>
+<span class="code-line">{</span>
+<span class="code-line">    return static_cast&lt;_Tp&amp;&amp;&gt;(__t);</span>
+<span class="code-line">}</span>
+<span class="code-line"></span>
+<span class="code-line">template &lt;class _Tp&gt;</span>
+<span class="code-line">inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11</span>
+<span class="code-line">_Tp&amp;&amp;</span>
+<span class="code-line">forward(typename std::remove_reference&lt;_Tp&gt;::type&amp;&amp; __t) _NOEXCEPT</span>
+<span class="code-line">{</span>
+<span class="code-line">    static_assert(!std::is_lvalue_reference&lt;_Tp&gt;::value,</span>
+<span class="code-line">        &quot;Can not forward an rvalue as an lvalue.&quot;);</span>
+<span class="code-line">    return static_cast&lt;_Tp&amp;&amp;&gt;(__t);</span>
+<span class="code-line">}</span>
+</pre></div>
+
+
+<table>
+    <tr>
+        <th>形参类型</th> 
+        <th>_Tp</th>
+        <th>type of __t</th>
+        <th>static_cast<_Tp&&>(__t)</th>
+    </tr>
+    <tr>
+        <td>Object(左值)</td> 
+        <td>Object</td>
+        <td>Object&</td>
+        <td>Object&&(右值)</td>
+    </tr>
+    <tr>
+        <td>Object(右值)</td>               
+        <td>Object</td> 
+        <td>Object&&</td>
+        <td>Object&&(右值)</td>
+    </tr>
+    <tr>
+        <td>Object&</td>
+        <td>Object&</td>
+        <td>Object&</td>
+        <td>Object&(左值)</td>
+    </tr>
+    <tr>
+        <td>Object&&</td>
+        <td>Object&&</td>
+        <td>Object&</td>
+        <td>Object&&(右值)</td>
+    </tr>
+</table>
+
+<ul>
+<li>完美转发中只用到了后两条</li>
+<li>_Tp 调用时已给出，就是形参 obj 的类型。</li>
+<li>形参类型是左值，__t 重载为 Object&amp; 。形参类型为右值，__t 重载为 Object&amp;&amp;</li>
+<li>static_assert 防止自作聪明的程序员写 <code>std::forward&lt;int&amp;&gt;(100)</code> 这是错误的写法。_Tp 必须是实参本身的类型。</li>
+</ul>
+<h3>总结</h3>
+<p>其实前面的都是废话。如果要实现完美转发，关键两点。</p>
+<ul>
+<li>使用 T&amp;&amp; arg 作为形参</li>
+<li>转发给其他函数时 std::forward<T>(arg)</li>
+</ul>
+<p>比如：</p>
+<div class="highlight"><pre><span class="code-line"><span class="nt">template</span> <span class="o">&lt;</span><span class="nt">typename</span> <span class="nt">Func</span><span class="o">,</span> <span class="nt">typename</span><span class="o">...</span> <span class="nt">Param</span><span class="o">&gt;</span></span>
+<span class="code-line"><span class="nt">auto</span> <span class="nt">apply</span><span class="o">(</span><span class="nt">Func</span> <span class="nt">f</span><span class="o">,</span> <span class="nt">Param</span><span class="o">&amp;&amp;...</span> <span class="nt">p</span><span class="o">)</span> <span class="nt">-</span><span class="o">&gt;</span> <span class="nt">decltype</span><span class="o">(</span><span class="nt">f</span><span class="o">(</span><span class="nt">p</span><span class="o">...))</span></span>
+<span class="code-line"><span class="p">{</span></span>
+<span class="code-line">    <span class="n">return</span> <span class="n">f</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Param</span><span class="o">&gt;</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">...</span><span class="p">);</span></span>
+<span class="code-line"><span class="p">}</span></span>
+</pre></div></div>
+		<br><br><br><br>
+		<div>
+			<h2>Comments</h2>
+<div id="disqus_thread"></div>		<div>
+	</div>
+				<footer class="footer">
+					<p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+					<p>&copy; fatboyzz</p>
+				</footer>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	</div>
+
+	<script src="./theme/js/jquery-1.11.1.min.js"></script>
+	<script src="./theme/js/bootstrap.min.js"></script>	
+</body>
+</html>

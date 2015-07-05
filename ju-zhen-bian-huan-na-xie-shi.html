@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>現在公開可能な情報</title>
+	<meta name="description" content="">
+	<meta name="author" content="fatboyzz">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="./theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="./theme/css/bootstrap.min.css" rel="stylesheet">
+	<link href="./theme/local.css" rel="stylesheet">
+	<link href="./theme/pygments.css" rel="stylesheet">
+
+<script type="text/javascript">
+	var disqus_identifier = "ju-zhen-bian-huan-na-xie-shi.html";
+	(function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = 'http://fatboyzz.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+
+</head>
+<body>
+	<div class="container">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">		
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div class="navbar-brand">
+						<a href="./index.html">現在公開可能な情報</a>
+					</div>
+					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li class="active"><a href="./category/ma-nong.html">码农</a></li>
+							<li ><a href="./category/zhai.html">宅</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="./archives.html">[archives]</a></li>
+							<li><a href="./tags.html">[tags]</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+	<div class='article'>
+		<div>
+			<h2>矩阵变换那些事</h2>
+			<p class="lead small">2014-04-01
+by <a class="url fn" href="./author/fatboyzz.html">fatboyzz </a>
+ in <a href="./category/ma-nong.html">码农</a>
+tags: <a href="./tag/c.html">c++</a> <a href="./tag/opengl.html">opengl</a> <a href="./tag/math.html">math</a> </p>
+		</div>
+		<div><h3>view 矩阵</h3>
+<div class="highlight"><pre><span class="code-line"><span class="kt">void</span> <span class="nf">gluLookAt</span> <span class="p">(</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">eyeX</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">eyeY</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">eyeZ</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">centerX</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">centerY</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">centerZ</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">Gldouble</span>    <span class="n">upX</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">upY</span><span class="p">,</span></span>
+<span class="code-line">    <span class="n">GLdouble</span>    <span class="n">upZ</span></span>
+<span class="code-line"><span class="p">);</span></span>
+</pre></div>
+
+
+<p>这个函数可以生成 view 矩阵，作用相当于更换了基底。</p>
+<p>opengl 默认基底 原点在视口中心，x 轴向右，y 向上，z 向屏幕外，相机处于原点，向 z 轴负半轴看去。</p>
+<p>如果想要换一个角度看世界，就需要坐标变换。把基底变换到新的位置，让 z 轴的负半轴指向相机所看的方向。</p>
+<p><em>声明一下，矩阵以列的方式看，顶点，向量都看成列矩阵（只有一列的矩阵）。</em></p>
+<h3>坐标变换就是换基底</h3>
+<p>基底，可以看成是矩阵的列向量。比如基底分别为 <span class="math">\(vx,vy,vz\)</span> 坐标为 <span class="math">\(v_0(x_0,y_0,z_0)\)</span> 的点可以表示为：</p>
+<p>
+<div class="math">$$\left( {\begin{array}{*{20}{c}}{{v_x}}&amp;{{v_y}}&amp;{{v_z}}\end{array}} \right){v_0} = {v_x}{x_0} + {v_y}{y_0} + {v_z}{z_0}$$</div>
+</p>
+<p>理解为 用坐标分量对基底进行线性组合。</p>
+<p>设 <span class="math">\(I\)</span> 为单位矩阵 则默认基底下坐标对应的值就是 <span class="math">\(Iv\)</span> 。</p>
+<p>现在如果想要换一套坐标，变成用矩阵 <span class="math">\(M\)</span> 的列向量作为基底，并且还要使得最终计算出的点是向量空间中的同一个点则：</p>
+<p>
+<div class="math">$$Iv = M(M^{ - 1}v)$$</div>
+</p>
+<p>把右边 <span class="math">\({M^{ - 1}}v\)</span> 看成整体，它意味着，若要换 <span class="math">\(M\)</span> 为基底，所有坐标都要左乘 <span class="math">\({M^{-1}}\)</span></p>
+<h3>复合换基底</h3>
+<p>gluLookAt 对基底做了两个变换。它先旋转了基底，使其 z 负半轴指向 center - eye ，然后位移到 eye 。</p>
+<p>这相当于新的基底为 ：</p>
+<p>
+<div class="math">$$M = TRI$$</div>
+</p>
+<p>理解为，将 <span class="math">\(I\)</span> 按列（即基底）切开，每列做了 <span class="math">\(TR\)</span> 变换后再合起来。</p>
+<p>所以坐标变换需要的矩阵就是 <span class="math">\((TR)^{-1}\)</span> 即 <span class="math">\(R^{-1}T^{-1}\)</span></p>
+<h3>gluLookAt 的实现</h3>
+<p>先通过规范化与叉乘，得到旋转后的基底。注意 :</p>
+<ul>
+<li><span class="math">\(F\)</span> 为相机方向即基底 z 轴负半轴方向。</li>
+<li><span class="math">\(R\)</span> 是正交矩阵 所以 <span class="math">\(R^T=R^{-1}\)</span> 。</li>
+</ul>
+<p>所以第三行添上负号。这就是 opengl 文档中的 <span class="math">\(M\)</span>。</p>
+<p>而 <span class="math">\(T\)</span> 是位移矩阵，所以 <span class="math">\(T^{-1}\)</span> 就是反方向位移。</p>
+<p>这就是 opengl 文档中的 glTranslated(-eyex, -eyey, -eyez) 。</p>
+<p>合起来就是 <span class="math">\(R^{-1}T^{-1}\)</span> 。</p>
+<p>(ps: opengl 文档  s = f x up' 缺少规范化)</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'white ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script></div>
+		<br><br><br><br>
+		<div>
+			<h2>Comments</h2>
+<div id="disqus_thread"></div>		<div>
+	</div>
+				<footer class="footer">
+					<p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+					<p>&copy; fatboyzz</p>
+				</footer>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	</div>
+
+	<script src="./theme/js/jquery-1.11.1.min.js"></script>
+	<script src="./theme/js/bootstrap.min.js"></script>	
+</body>
+</html>
